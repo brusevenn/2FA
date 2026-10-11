@@ -1,52 +1,97 @@
-/**
- * PUBLIC DEMO ONLY. Test-only seeds are intentionally disclosed in this source.
- * Do not enter real 2FA credentials, backup codes, or authenticator secrets.
- */
-const PERIOD = 30;
-const ACCOUNTS = [
-  { id: "alpha", name: "Alpha", seed: "12345678901234567890", caption: "演示账户 01" },
-  { id: "beta", name: "Beta", seed: "PUBLIC-DEMO-ONLY-2026-B", caption: "演示账户 02" },
-  { id: "gamma", name: "Gamma", seed: "PUBLIC-DEMO-ONLY-2026-C", caption: "演示账户 03" }
-];
-
-async function totp(seed, step) {
-  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(seed), { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
-  let count = BigInt(step);
-  const data = new Uint8Array(8);
-  for (let i = 7; i >= 0; i--) { data[i] = Number(count & 255n); count >>= 8n; }
-  const digest = new Uint8Array(await crypto.subtle.sign("HMAC", key, data));
-  const offset = digest[digest.length - 1] & 15;
-  const n = (digest[offset] & 127) * 16777216 +
-    digest[offset+1] * 65536 + digest[offset+2] * 256 + digest[offset+3];
-  return String(n % 1000000).padStart(6, "0");
-}
-
-const CSS = ":root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#edf5ff;background:#070f20}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 88% 3%,#1d3650 0%,transparent 45%),radial-gradient(ellipse at 3% 82%,#192543 0%,transparent 40%),#080e1a}button{font:inherit}.wrap{max-width:1150px;margin:auto;padding:0 27px}.top{height:92px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff14}.logo{font-weight:900;font-size:22px;letter-spacing:1px}.logo b{color:#70d8cc}.mark{font-size:24px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#8d85f9,#56d2bd);border-radius:10px;width:40px;height:40px;margin-right:12px;vertical-align:middle}.topbadge,.pill{font-size:10px;letter-spacing:1px;font-weight:750;color:#9ab0c3;border:1px solid #324459;border-radius:99px;padding:8px 12px}.statusdot{display:inline-block;width:7px;height:7px;background:#3cdeb4;border-radius:100%;margin-right:7px;box-shadow:0 0 9px #3cdeb474}.hero{padding:76px 0 54px}.eyebrow{color:#8b9dff;font-weight:800;letter-spacing:2.5px;font-size:12px}.hero h1{font-size:clamp(39px,5.5vw,66px);font-weight:850;line-height:1.18;letter-spacing:-2px;margin:17px 0 22px}.grad{background:linear-gradient(90deg,#7e9bff,#6bdbca);background-clip:text;-webkit-background-clip:text;color:transparent;display:block}.desc{color:#9caec5;font-size:16px;line-height:1.9;max-width:660px}.warn{margin-top:24px;border:1px solid #9c783743;background:#a57b1814;border-radius:14px;padding:16px 20px;max-width:770px;font-size:13px;line-height:1.7;color:#d6b991}.warn strong{color:#e8cc99}.sectionhead{display:flex;align-items:end;justify-content:space-between;margin-bottom:21px}.sectionhead h2{font-size:23px;margin:0 0 2px}.sectionhead small{color:#8d9bb1}.synced{font-size:12px;color:#6adab5}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.card{--accent:#8998fb;background:linear-gradient(155deg,#19243a,#111c2f);border:1px solid #30405a;border-radius:20px;padding:24px;position:relative;overflow:hidden;box-shadow:0 20px 55px #0003}.card:before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}.card:nth-child(2){--accent:#6ddac5}.card:nth-child(3){--accent:#eaa6d4}.head{display:flex;justify-content:space-between;align-items:center}.circle{width:45px;height:45px;display:grid;place-items:center;border:1px solid var(--accent);border-radius:12px;color:var(--accent);font-size:18px;font-weight:800;background:#ffffff07}.pill{font-size:9px;padding:7px 10px}.card h3{font-size:22px;margin:26px 0 4px}.card p{font-size:12px;color:#889cb3;margin:0}.codelabel{margin-top:32px;display:block;color:#899bb2;font-size:11px}.code{font-size:clamp(24px,3vw,35px);font-variant-numeric:tabular-nums;font-weight:820;letter-spacing:2px;white-space:nowrap;margin:11px 0 28px}.controls{border-top:1px solid #2e3e53;padding-top:20px;display:flex;align-items:center;gap:10px}.ring{border-radius:50%;padding:3px;width:42px;height:42px;display:grid;place-items:center;background:conic-gradient(var(--accent) 360deg,#29394c 0)}.ring span{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:#182338;font-weight:800;font-size:12px}.controls em{font-style:normal;font-size:11px;color:#879bb1}.copy{margin-left:auto;border-radius:9px;color:var(--accent);background:#ffffff09;border:1px solid #ffffff21;padding:10px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.copy:disabled{cursor:not-allowed;opacity:.4}.copy:not(:disabled):hover{background:#ffffff1a}.track{background:#2a3648;height:3px;border-radius:3px;margin-top:22px;overflow:hidden}.bar{height:100%;background:var(--accent);width:0%}.detail{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0 65px}.infobox{display:flex;gap:16px;background:#131e2e9c;border:1px solid #27364a;border-radius:14px;padding:20px}.infobox i{font-style:normal;color:#aab5fa;font-weight:900;font-size:13px;padding-top:2px}.infobox b{font-size:14px}.infobox p{color:#90a2b8;font-size:12px;line-height:1.8;margin:6px 0 0}.footer{border-top:1px solid #223348;padding:28px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;color:#6f8095;font-size:11px;gap:12px}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,90px);opacity:0;transition:all .2s;background:#e9fff2;color:#19352f;border-radius:9px;padding:13px 19px;font-size:13px;font-weight:700}.toast.visible{transform:translate(-50%,0);opacity:1}button:focus-visible{outline:2px solid white;outline-offset:2px}@media(max-width:960px){.grid{grid-template-columns:1fr 1fr}.card:last-child{grid-column:span 2}.code{font-size:36px}}@media(max-width:640px){.wrap{padding:0 18px}.top{height:75px}.topbadge{font-size:9px}.hero{padding:55px 0 42px}.hero h1{letter-spacing:-1px}.desc{font-size:14px}.grid,.detail{grid-template-columns:1fr}.card:last-child{grid-column:auto}.code{font-size:36px}.card{padding:23px}.sectionhead h2{font-size:20px}.detail{margin-bottom:40px}}";
-
-const CLIENT = "(function(){const nodes=[...document.querySelectorAll('[data-id]')],status=document.getElementById('status'),toast=document.getElementById('toast');let offset=0,expires=0,last=0,busy=false;function tick(){const left=Math.max(0,expires-Date.now()-offset),active=left>0&&expires>0,ratio=Math.min(1,left/30000);for(const node of nodes){node.querySelector('.seconds').textContent=expires?String(Math.ceil(left/1000)).padStart(2,'0'):'--';node.querySelector('.ring').style.background='conic-gradient(var(--accent) '+(ratio*360)+'deg,#29394c 0)';node.querySelector('.bar').style.width=(ratio*100)+'%';node.querySelector('.copy').disabled=!active||!node.dataset.code;if(!active)node.querySelector('.code').textContent='--- ---';}if(!busy&&(!active||left<1200)&&Date.now()-last>1500)refresh();}async function refresh(){if(busy)return;busy=true;last=Date.now();const start=Date.now();try{const r=await fetch('/api/demo',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const v=await r.json();if(v.demo!==true||!Array.isArray(v.tokens))throw new Error('bad response');offset=v.serverTime+(Date.now()-start)/2-Date.now();expires=v.validUntil;for(const t of v.tokens){const node=nodes.find(n=>n.dataset.id===t.id);if(node&&/^\\d{6}$/.test(t.code)){node.dataset.code=t.code;node.querySelector('.code').textContent=t.code.slice(0,3)+' '+t.code.slice(3);}}status.textContent='● 已同步 · 自动更新';status.style.color='#6adab5';tick();}catch(e){status.textContent='● 网络异常 · 正在重试';status.style.color='#e8bd88';console.warn('Demo request failed',e);}finally{busy=false}}function alertText(t){toast.textContent=t;toast.classList.add('visible');setTimeout(()=>toast.classList.remove('visible'),2100)}for(const node of nodes)node.querySelector('.copy').addEventListener('click',async()=>{if(expires<=Date.now()+offset||!/^\\d{6}$/.test(node.dataset.code||''))return;try{await navigator.clipboard.writeText(node.dataset.code);alertText(node.dataset.id.toUpperCase()+' 测试码已复制')}catch{alertText('无法复制，请手动选择验证码')}});refresh();setInterval(tick,150);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()})})();";
-
-function markup(){
-  const cards = ACCOUNTS.map((v,i) =>
-    "<article class='card' data-id='"+v.id+"'><div class='head'><div class='circle'>"+(i+1)+"</div><span class='pill'>DEMO TOKEN</span></div><h3>"+v.name+"</h3><p>"+v.caption+"</p><span class='codelabel'>当前动态验证码</span><div class='code' aria-live='polite'>--- ---</div><div class='controls'><div class='ring'><span class='seconds'>--</span></div><em>秒后更新</em><button type='button' class='copy' disabled>复制 ↗</button></div><div class='track'><div class='bar'></div></div></article>"
-  ).join("");
-  return "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><meta name='robots' content='noindex,nofollow'><meta name='theme-color' content='#080e1a'><title>公开令牌演示 · OTP.LAB</title><meta name='description' content='公开测试 TOTP 动态验证码，无真实账户密钥'><style>"+CSS+"</style><script defer src='/app.js'></script></head><body><div class='wrap'><header class='top'><div class='logo'><span class='mark'>✳</span>OTP<b>.LAB</b></div><span class='topbadge'><span class='statusdot'></span>PUBLIC DEMO · V1</span></header><main><section class='hero'><p class='eyebrow'>TOTP / AUTHENTICATOR / LIVE DEMO</p><h1>实时验证码<span class='grad'>演示中心</span></h1><p class='desc'>展示基于时间的一次性密码（TOTP）如何运作。以下全部使用公开、虚构的测试密钥，每 30 秒自动更新一次。</p><div class='warn'><strong>注意：仅用于公开演示。</strong> 这些验证码不对应任何真实账户，不得用于真实账户的双重验证，也不要在这个公开页面添加真实密钥。</div></section><section><div class='sectionhead'><div><h2>测试令牌</h2><small>LIVE TOKENS · 30 SECOND CYCLE</small></div><span id='status' class='synced'>● 正在同步</span></div><div class='grid'>"+cards+"</div></section><section class='detail'><div class='infobox'><i>01</i><div><b>符合标准原理</b><p>HMAC-SHA1、6 位数字与 30 秒时间步长；验证码由服务器时间驱动。</p></div></div><div class='infobox'><i>02</i><div><b>公开测试数据</b><p>不需要登录或绑定账户；全部测试密钥公开写在项目代码中，不保存任何真实令牌。</p></div></div></section></main><footer class='footer'><span>OTP.LAB · PUBLIC TEST ENVIRONMENT</span><span>RFC 6238 · SHA1 · 6 DIGITS</span></footer></div><div id='toast' class='toast' role='status'></div></body></html>";
-}
-function reply(body,type,status=200,headers={}){
-  return new Response(body,{status,headers:{"content-type":type,"cache-control":"no-store, max-age=0","x-content-type-options":"nosniff","referrer-policy":"no-referrer","x-frame-options":"DENY",...headers}});
-}
-export default {
-  async fetch(request){
-    const method = request.method;
-    if(method!=="GET" && method!=="HEAD")return reply("Method not allowed","text/plain",405,{allow:"GET, HEAD"});
-    const path=new URL(request.url).pathname;
-    if(path==="/"||path==="/index.html")return reply(method==="HEAD"?null:markup(),"text/html; charset=utf-8",200,{"content-security-policy":"default-src 'none'; style-src 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"});
-    if(path==="/app.js")return reply(method==="HEAD"?null:CLIENT,"application/javascript; charset=utf-8");
-    if(path==="/api/demo"){
-      const now=Date.now(),step=Math.floor(now/(PERIOD*1000));
-      const tokens=await Promise.all(ACCOUNTS.map(async a=>({id:a.id,label:a.name,code:await totp(a.seed,step)})));
-      return reply(method==="HEAD"?null:JSON.stringify({demo:true,serverTime:now,period:PERIOD,validUntil:(step+1)*PERIOD*1000,tokens}),"application/json; charset=utf-8");
-    }
-    if(path==="/favicon.ico")return new Response(null,{status:204});
-    return reply("Not found","text/plain",404);
+export default (function secureShareWorker() {
+  const E=new TextEncoder(),CNAME="otp_share_session",DURATION=2*3600*1000;
+  const H={"cache-control":"private, no-store, max-age=0","content-security-policy":"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'","x-frame-options":"DENY","x-content-type-options":"nosniff","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains"};
+  const CSS=":root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#080f1c;color:#eaf3ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 95% 2%,#273854 0,transparent 45%),radial-gradient(ellipse at 0% 100%,#163d41 0,transparent 43%),#080f1c}main{width:min(calc(100% - 36px),565px);margin:0 auto;padding:48px 0 80px}header{display:flex;align-items:center;justify-content:space-between;padding:0 0 65px}.logo{font-weight:850;letter-spacing:1px;font-size:20px}.logo b{color:#78e3d2}.pill{font-size:10px;letter-spacing:.06em;color:#a7d7cd;border:1px solid #39546c;border-radius:99px;padding:9px 12px}.tag{color:#9aa3ff;font-size:11px;letter-spacing:2px;font-weight:800;margin-bottom:22px}h1{font-size:clamp(37px,8vw,50px);letter-spacing:-1.7px;line-height:1.16;margin:0 0 19px}p{color:#9caec5;font-size:14px;line-height:1.9}.panel{background:linear-gradient(143deg,#1a283a,#111b2c);border:1px solid #30445a;border-radius:20px;padding:30px;margin-top:30px;box-shadow:0 15px 60px #0004}.panel h2{margin:0 0 10px;font-size:22px}.lbl{color:#b4c8da;font-weight:700;font-size:12px;display:block;margin:25px 0 9px}input{font:inherit;background:#081523;border:1px solid #3e536a;border-radius:10px;padding:15px;color:#fff;width:100%}input:focus{outline:2px solid #73d8c6;outline-offset:2px}button{font:inherit;cursor:pointer}.submit{display:block;background:linear-gradient(100deg,#81dfd0,#9aabfd);border:0;color:#0d2232;border-radius:10px;padding:15px;width:100%;margin-top:18px;font-weight:800}.fine{color:#8da0b6;font-size:12px;line-height:1.8}.error{color:#f6aea4}.small{font-size:12px;color:#9aadc5}.help{margin-top:24px;padding:20px;border:1px solid #3a4c5f;border-radius:13px;background:#18263775}.help b{font-size:13px}.steps{line-height:2.1;font-size:13px;color:#a6bdd2;padding-left:22px}.steps code,.fine code{color:#a6e4d6;overflow-wrap:anywhere}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.name{font-size:12px;letter-spacing:.11em;color:#a4bad0;font-weight:750}.number{font-variant-numeric:tabular-nums;font-size:clamp(42px,11vw,70px);font-weight:900;letter-spacing:.06em;white-space:nowrap;margin:27px 0}.track{height:5px;background:#334255;border-radius:4px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,#7b97ff,#80e0ce);width:0}.copy{border:1px solid #4b696d;color:#bbfff0;background:#203b45;padding:10px 16px;border-radius:9px;font-size:12px;font-weight:700}.copy:disabled{opacity:.5;cursor:not-allowed}.quiet{background:none;color:#95b1bf;border:0;font-size:12px;text-decoration:underline}.foot{margin-top:30px;text-align:center;color:#72859a;font-size:11px}#toast{position:fixed;bottom:22px;left:50%;background:#e7fff6;color:#20382f;padding:11px 18px;border-radius:10px;transform:translate(-50%,65px);opacity:0;transition:.2s}#toast.visible{transform:translate(-50%,0);opacity:1}@media(max-width:600px){header{padding-bottom:48px}.panel{padding:22px}.number{font-size:45px}}";
+  const JS="(()=>{const code=document.getElementById('code');if(!code)return;const bar=document.getElementById('bar'),seconds=document.getElementById('seconds'),copy=document.getElementById('copy'),state=document.getElementById('state');let offset=0,expires=0,digits='',period=30,loading=false,last=0;async function refresh(){if(loading||Date.now()-last<900)return;last=Date.now();loading=true;const start=Date.now();try{const r=await fetch('/api/token',{credentials:'same-origin',cache:'no-store'});if(r.status===401){location.reload();return}if(!r.ok)throw Error('Unavailable');const data=await r.json();if(!/^\\d{6,8}$/.test(data.code)||!Number.isFinite(data.validUntil))throw Error('Malformed');offset=data.serverTime+(Date.now()-start)/2-Date.now();expires=data.validUntil;digits=data.code;period=data.period;code.textContent=digits.slice(0,Math.ceil(digits.length/2))+' '+digits.slice(Math.ceil(digits.length/2));state.textContent='连接正常 · 已验证';state.classList.remove('error')}catch{digits='';code.textContent='--- ---';state.textContent='连接失败 · 正在重新连接';state.classList.add('error')}finally{loading=false}}function tick(){const rem=Math.max(0,expires-Date.now()-offset);seconds.textContent=expires?Math.ceil(rem/1000)+' 秒后刷新':'同步中';bar.style.width=rem/(period*1000)*100+'%';copy.disabled=!digits||rem<500;if((!digits||rem<1100)&&!loading)refresh()}copy.addEventListener('click',async()=>{if(copy.disabled)return;try{await navigator.clipboard.writeText(digits);const toast=document.getElementById('toast');toast.textContent='验证码已复制';toast.classList.add('visible');setTimeout(()=>toast.classList.remove('visible'),1600)}catch{state.textContent='无法自动复制，请手动复制'}});refresh();setInterval(tick,180);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()})})();";
+  const response=(body,status=200,type="text/html; charset=utf-8",more={})=>new Response(body,{status,headers:{...H,"content-type":type,...more}});
+  const escape=s=>String(s).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
+  function decodeBase32(s){
+    const val=s.replace(/[\s-]/g,"").replace(/=+$/,"").toUpperCase();
+    if(val.length<16||val.length>512||/[^A-Z2-7]/.test(val))throw Error("Invalid TOTP seed");
+    let bits=0,buf=0;const out=[];
+    for(const c of val){const v=c>="A"&&c<="Z"?c.charCodeAt(0)-65:c.charCodeAt(0)-50+26;buf=(buf<<5)|v;bits+=5;if(bits>=8){bits-=8;out.push((buf>>>bits)&255);buf&=(1<<bits)-1;}}
+    if(out.length<10)throw Error("Too short");return new Uint8Array(out);
   }
-};
+  function parseTOTP(s){
+    let seed=s.trim(),period=30,digits=6,hash="SHA-1";
+    if(/^otpauth:/i.test(seed)){
+      const u=new URL(seed);
+      if(u.protocol!=="otpauth:"||u.hostname.toLowerCase()!=="totp")throw Error("Only TOTP");
+      seed=u.searchParams.get("secret")||"";
+      if(u.searchParams.has("period"))period=Number(u.searchParams.get("period"));
+      if(u.searchParams.has("digits"))digits=Number(u.searchParams.get("digits"));
+      if(u.searchParams.has("algorithm"))hash=({"SHA1":"SHA-1","SHA256":"SHA-256","SHA512":"SHA-512"})[(u.searchParams.get("algorithm")||"").toUpperCase().replace(/-/g,"")];
+    }
+    if(![30,60,120].includes(period)||![6,8].includes(digits)||!hash)throw Error("Unsupported TOTP parameter");
+    return {key:decodeBase32(seed),period,digits,hash};
+  }
+  async function otp(src,time){
+    const step=BigInt(Math.floor(time/(src.period*1000)));let n=step;const bytes=new Uint8Array(8);
+    for(let i=7;i>=0;i--){bytes[i]=Number(n&255n);n>>=8n;}
+    const k=await crypto.subtle.importKey("raw",src.key,{name:"HMAC",hash:src.hash},false,["sign"]);
+    const b=new Uint8Array(await crypto.subtle.sign("HMAC",k,bytes)),j=b[b.length-1]&15;
+    const v=(b[j]&127)*16777216+(b[j+1]<<16)+(b[j+2]<<8)+b[j+3];
+    return {code:String(v%10**src.digits).padStart(src.digits,"0"),period:src.period,validUntil:(Math.floor(time/(src.period*1000))+1)*src.period*1000,serverTime:time};
+  }
+  function ready(env){
+    if(typeof env?.FRIEND_PASSWORD!=="string"||env.FRIEND_PASSWORD.length<16||typeof env?.TOTP_SECRET!=="string"||!env.TOTP_SECRET.trim())return "missing";
+    try{parseTOTP(env.TOTP_SECRET);return "ready";}catch{return "invalid";}
+  }
+  function enc64(b){return btoa(String.fromCharCode(...b)).replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");}
+  function dec64(s){if(s.length>500||!/^[a-zA-Z0-9_-]+$/.test(s))return null;try{return Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")+"===".slice((s.length+3)%4)),c=>c.charCodeAt(0));}catch{return null;}}
+  async function signKey(p){return crypto.subtle.importKey("raw",E.encode("otp-share:v1:"+p),{name:"HMAC",hash:"SHA-256"},false,["sign","verify"]);}
+  async function issueCookie(pass){
+    const message="v1:"+String(Date.now()+DURATION)+":"+enc64(crypto.getRandomValues(new Uint8Array(16)));
+    return enc64(E.encode(message))+"."+enc64(new Uint8Array(await crypto.subtle.sign("HMAC",await signKey(pass),E.encode(message))));
+  }
+  async function authenticated(req,pass){
+    const match=(req.headers.get("cookie")||"").match(/(?:^|;\s*)otp_share_session=([^;]+)/);if(!match||match[1].length>300)return false;
+    const p=match[1].split(".");if(p.length!==2)return false;
+    const msg=dec64(p[0]),sig=dec64(p[1]);if(!msg||!sig||sig.length!==32)return false;
+    const parts=new TextDecoder().decode(msg).split(":");if(parts.length!==3||parts[0]!=="v1"||! /^\d{13}$/.test(parts[1]))return false;
+    const deadline=Number(parts[1]);if(deadline<=Date.now()||deadline>Date.now()+DURATION)return false;
+    return crypto.subtle.verify("HMAC",await signKey(pass),sig,msg);
+  }
+  async function equalHash(a,b){
+    const ah=new Uint8Array(await crypto.subtle.digest("SHA-256",E.encode(a))),bh=new Uint8Array(await crypto.subtle.digest("SHA-256",E.encode(b)));let result=0;for(let i=0;i<32;i++)result|=ah[i]^bh[i];return result===0;
+  }
+  function page(content,badge="私人访问"){
+    return '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#080f1c"><title>共享动态验证码 · OTP SHARE</title><link rel="stylesheet" href="/styles.css"><script defer src="/app.js"></script></head><body><main><header><span class="logo">OTP<b>·SHARE</b></span><span class="pill">'+badge+'</span></header>'+content+'<div class="foot">仅授权的朋友可以查看 · 不对外提供原始密钥</div></main><div id="toast" role="status"></div></body></html>';
+  }
+  function setup(invalid){
+    return page('<div class="tag">OWNER CONFIGURATION</div><h1>网站已锁定<br>等待配置令牌</h1><p>公开演示验证码已停用。未配置授权信息时，任何访客都看不到真实的验证码。</p><section class="panel"><h2>管理员配置指南</h2><p>Cloudflare → Workers & Pages → 2fa → Settings → Variables and Secrets，新增下面两个类型为 Secret 的变量：</p><ol class="steps"><li><code>FRIEND_PASSWORD</code>：至少16字符的随机访问密码，私下发给朋友。</li><li><code>TOTP_SECRET</code>：指定应用的 Base32 密钥或 <code>otpauth://totp/...</code> URI。</li></ol><p class="fine">请勿在聊天、GitHub 或公开 URL 中填写密钥。Google Authenticator 的迁移二维码并非普通 otpauth URI，需要获取目标应用的原始设置密钥。</p>'+(invalid?'<p class="error">检测到令牌格式无效，请核实 TOTP 设置参数。</p>':'')+'</section>',"未启用");
+  }
+  function login(wrong){
+    return page('<div class="tag">FRIENDS ACCESS</div><h1>分享指定应用的<br>动态验证码</h1><p>仅限获得网站所有者授权的朋友。请使用私下提供的访问密码登录。</p><section class="panel"><h2>输入访问密码</h2><form action="/login" method="post"><label class="lbl" for="pwd">访问密码</label><input id="pwd" type="password" name="password" required maxlength="256" autocomplete="current-password"><button class="submit" type="submit">查看动态验证码 →</button></form>'+(wrong?'<p class="error">访问密码不正确，请重试。</p>':'')+'<p class="fine">切勿在公共电脑保存密码，也不要将验证码传播给未授权的人。</p></section>');
+  }
+  function view(name){
+    return page('<div class="tag">AUTHENTICATOR / TOTP</div><h1>当前动态验证码</h1><p>此页面只展示一个指定应用的临时验证码；不会展示、传输给访客或允许导出生成验证码的原始密钥。</p><section class="panel"><div class="row"><span class="name">'+escape(name)+'</span><span class="pill">TOTP</span></div><div id="code" class="number">--- ---</div><div class="track"><div class="bar" id="bar"></div></div><div class="row" style="margin-top:20px"><span id="seconds" class="small">同步中</span><button class="copy" id="copy" disabled>复制验证码</button></div><p id="state" class="fine">正在同步服务器时间…</p></section><div class="help"><b>安全提醒</b><p>获得动态验证码并持有该账户密码的人可能登录账户。请仅与明确获得授权的朋友分享。</p></div><form method="post" action="/logout" style="text-align:right;margin-top:20px"><button class="quiet" type="submit">退出登录</button></form>');
+  }
+  return {async fetch(request,env={}){
+    const method=request.method,path=new URL(request.url).pathname;
+    if(path==="/favicon.ico")return new Response(null,{status:204,headers:H});
+    if(method==="GET"&&path==="/styles.css")return response(CSS,200,"text/css; charset=utf-8");
+    if(method==="GET"&&path==="/app.js")return response(JS,200,"application/javascript; charset=utf-8");
+    const status=ready(env);
+    if(status!=="ready")return method==="GET"&&path==="/"?response(setup(status==="invalid"),503):response("Not configured",503,"text/plain");
+    if(method==="POST"&&(path==="/login"||path==="/logout")){
+      const origin=request.headers.get("origin");if(origin&&origin!==new URL(request.url).origin)return response("Forbidden",403,"text/plain");
+      if(path==="/logout")return response(null,303,"text/plain",{"location":"/","set-cookie":CNAME+"=; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0"});
+      if(Number(request.headers.get("content-length")||0)>2048)return response("Request too large",413,"text/plain");
+      let form;try{form=await request.formData();}catch{return response(login(true),400);}
+      const pass=form.get("password");
+      if(typeof pass!=="string"||pass.length>256||!await equalHash(pass,env.FRIEND_PASSWORD))return response(login(true),401);
+      const cookie=await issueCookie(env.FRIEND_PASSWORD);
+      return response(null,303,"text/plain",{"location":"/","set-cookie":CNAME+"="+cookie+"; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age="+DURATION/1000});
+    }
+    if(method!=="GET")return response("Method not allowed",405,"text/plain",{"allow":"GET, POST"});
+    const authorized=await authenticated(request,env.FRIEND_PASSWORD);
+    if(path==="/")return response(authorized?view(typeof env.TOKEN_LABEL==="string"?env.TOKEN_LABEL.slice(0,70):"共享应用"):login(false));
+    if(path==="/api/token"){
+      if(!authorized)return response(JSON.stringify({error:"unauthorized"}),401,"application/json");
+      try{return response(JSON.stringify(await otp(parseTOTP(env.TOTP_SECRET),Date.now())),200,"application/json");}
+      catch{return response(JSON.stringify({error:"invalid configuration"}),503,"application/json");}
+    }
+    return response("Not found",404,"text/plain");
+  }};
+})();
